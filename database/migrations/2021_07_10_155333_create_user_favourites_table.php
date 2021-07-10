@@ -14,8 +14,10 @@ class CreateUserFavouritesTable extends Migration
     public function up()
     {
         Schema::create('user_favourites', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('music_id')->constrained('music');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('music_id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('music_id')->references('id')->on('music');
             $table->timestamps();
         });
     }
