@@ -17,9 +17,9 @@ class CreateMusicTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('performer');
-            $table->string('author');
-            $table->string('duration');
-            $table->string('text');
+            $table->string('author')->default('author');
+            $table->string('duration')->default('0:00');
+            $table->string('text')->default('text');
             $table->timestamps();
         });
     }

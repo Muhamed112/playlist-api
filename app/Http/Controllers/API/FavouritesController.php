@@ -7,25 +7,37 @@ use App\Models\userFavourites;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+Use Exception;
 
 class FavouritesController extends Controller
 {
     public function storeFavourites(Request $request) {
-        $musicData = $request->validate([
-            'id' => 'required|string',
-            'name' => 'required|string'
-        ]);
+        $request->validate(['id'=>'required']);
+        $musicData = $request->id;
 
-        $data = array('user_id'=>Auth::id(),'music_id' => $musicData['id']);
-        userFavourites::create($data);
+        foreach ($musicData as $Music)
+        {
+            try {
+                $data = array('user_id'=>Auth::id(),'music_id'=>$Music);
+                userFavourites::create($data);
+            } catch (Exception $e) {
+                return response(['message' => "Already in favourites"]);
+            }
+        }
 
-        $response = [ 'user_fav' => $data];
+        $dataArr = array('user_id' => Auth::id(),'music_id'=>$musicData);
+        $response = [ 'user_fav' => $dataArr];
         return response($response, 201);
     }
 
     public function getFavourites()
     {
-        $favourites = DB::table('music')->select('name','performer','author','duration','text')->where('id',1);
-        return userFavourites::all();
+        $favourites = DB::table('user_favourites')
+                      ->join('music','music_id','=','music.id')
+                      ->select('id','name','performer','author','duration','text')
+                      ->where('user_id',Auth::id())->get();
+
+        $responseArr = array('user_id'=>Auth::id(),'user_fav'=>$favourites);
+        return response($responseArr,201);
     }
 }
