@@ -36,12 +36,25 @@ class MusicController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'author'=> 'required'
+        $data =  $request->validate([
+            'name' => 'required|string',
+            'performer' => 'string',
+            'author'=> 'required|string',
+            'duration' => 'string',
+            'text' => 'string'
         ]);
 
-        return Music::create($request->all());
+        $music = Music::create([
+            'name' => $data['name'],
+            'performer' => $data['performer'],
+            'author' => $data['author'],
+            'duration' => $data['duration'],
+            'text' => $data['text'],
+        ]);
+
+        $response = [ 'music' => $music ];
+        return response($response,201);
+
     }
 
     /**

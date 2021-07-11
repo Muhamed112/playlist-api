@@ -21,6 +21,10 @@ Route::post('login', [AuthController::class,'login']);
 
 //Protected Routes
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::group(['prefix'=>'admin', 'middleware' => ['auth','role_or_permission:admin']], function() {
+        Route::post('addMusic', [MusicController::class,'store'])->middleware(['permission:store music']);;
+    });
+
     Route::post('logout',[AuthController::class,'logout']);
     Route::get('playlist',[MusicController::class,'index']);
 });
